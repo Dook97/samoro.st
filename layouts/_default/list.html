@@ -1,0 +1,11 @@
+{{ define "main" }}
+  {{ .Content }}
+  {{ range .Pages.GroupByDate "2006" }}
+    <h3 class="list-year">{{ .Key }}</h3>
+    <ul class="list-item">
+      {{ range .Pages.ByDate.Reverse }}
+        <li>{{ dateFormat "2. January" .Date }} <a href="{{ .RelPermalink }}">{{ .Name }}</a></li>
+      {{ end }}
+    </ul>
+  {{ end }}
+{{ end }}

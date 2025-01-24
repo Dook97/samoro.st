@@ -1,0 +1,189 @@
+:root {
+	--sidepanel-width: 15em;
+}
+
+@font-face {
+	font-family: "texgyrepagella";
+	src: url("/font/texgyrepagella-regular.otf") format("opentype");
+
+	/* use default font while custom one is loading */
+	font-display: swap;
+}
+
+body {
+	margin: 0;
+
+	font-family: "texgyrepagella", "notosymbols";
+	text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+	color: #CCC;
+	background-color: rgb(24, 26, 27);
+
+	/* don't use retarded mobile font-size adjustment */
+	text-size-adjust: none;
+}
+
+#bgimage-holder {
+	position: fixed;
+	height: 100%;
+	width: calc(100% - var(--sidepanel-width));
+	background-image: url("/img/solitary_tree.jpg"), url("/img/solitary_tree_small.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: bottom center;
+	z-index: -1;
+}
+
+.row-container {
+	display: grid;
+	grid-template-columns: 1fr 7fr;
+	gap: 0;
+}
+
+#main-content {
+	background-color: rgba(24, 26, 27, .95);
+
+	max-width: 40em;
+	min-width: 25em;
+	margin: 6em 1em 0 3em;
+	padding: 2em;
+}
+
+#main-content img {
+	max-height: 15em;
+	max-width: 100%;
+}
+
+#main-content figure {
+	text-align: center;
+}
+
+#main-content h1 {
+	font-size: 2.5em !important;
+	font-weight: 500;
+	position: relative;
+	padding-left: 0.5em;
+	left: -0.80em;
+	border-left: 0.2em solid #68A6E5;
+	text-shadow: -2px 2px 0 #000, 2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000;
+	color: #ccc;
+}
+
+#sidepanel {
+	display: flex;
+	justify-content: center;
+	margin: 0;
+
+	width: var(--sidepanel-width);
+
+	background-image: url('/img/vetev.png')
+	background-position: bottom left;
+}
+
+#panel-content {
+	margin: 1em;
+	position: fixed;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}
+
+#panel-top {
+	flex-grow: 1;
+}
+
+#panel-bottom {
+	padding: 1em;
+}
+
+#main-footer {
+	margin-top: 12em;
+	margin-bottom: 3em;
+}
+
+.header-ico {
+	width: 1.5em;
+	height: 1.5em;
+}
+
+a {
+	text-decoration: None;
+}
+
+#sidepanel a {
+	color: #ccc;
+}
+
+h1 > a:hover {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+em {
+	color: #68A6E5;
+	font-style: italic;
+}
+
+code, pre {
+	color: #FCE945;
+	text-shadow: none;
+}
+
+q, blockquote {
+	color: #7adc76;
+	font-style: italic;
+}
+
+.katex-display {
+	padding: 1em;
+	text-shadow: none;
+	border-left: 0.2em solid #FCE945;
+	background-color: #202020;
+}
+
+.code-highlight {
+	margin: 1em 0;
+	text-shadow: none;
+	border-left: 0.2em solid #68A6E5;
+}
+
+#main-content > pre {
+	padding: 1em;
+	text-shadow: none;
+	background-color: #202020;
+	border-left: 0.3em solid #68A6E5;
+}
+
+#main-content > pre > code {
+	color: #ddd;
+}
+
+#main-content a {
+	color: #ff99ff;
+}
+
+#panel-decor {
+	position: fixed;
+	width: var(--sidepanel-width);
+	height: auto;
+	bottom: 0;
+	left: 0;
+	z-index: -1;
+}
+
+h3 {
+	margin-top: 2em;
+}
+
+.list-year {
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+.list-item {
+	margin-top: 0;
+	list-style-type: none;
+}

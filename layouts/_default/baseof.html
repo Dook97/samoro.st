@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{ .Language }}">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ .Site.Title }} | {{ .Title }}</title>
+    <link rel="stylesheet" href="/style.css">
+    {{ $noop := .WordCount -}} <!-- force content render before hasMath check -->
+    {{- if .Page.Store.Get "hasMath" -}}
+    <link href="/katex.min.css" rel="stylesheet">
+    {{- end }}
+  </head>
+  <body>
+    <div class="row-container">
+      <div id="sidepanel">
+        <div id="panel-content">
+          <div id="panel-top">
+            <h1><a href="/">Samoro.st</a></h1>
+            {{- range site.Menus.main }}
+            <p><a href="{{ .URL }}">{{ .Name }}</a></p>
+            {{- end }}
+          </div>
+          <div id="panel-bottom">
+            <a href="/blog/index.xml"><img class="header-ico" src="/img/rss-ico.svg" /></a>
+            <a href="https://www.youtube.com/@jan_doskocil"><img class="header-ico" src="/img/youtube-ico.svg" /></a>
+            <a href="https://github.com/Dook97"><img class="header-ico" src="/img/github-ico.svg" /></a>
+            <p><pre>&copy; {{ time.Now.Format "2006" }} {{ .Site.Params.Owner }}</pre></p>
+            <img id="panel-decor" src="/img/vetev.png" />
+          </div>
+        </div>
+      </div>
+      <div id="mainpanel">
+        <div id="bgimage-holder"></div>
+        <div id="main-content" class="row-item">
+          {{ block "main" . }}
+          {{ end }}
+        </div>
+        <div id="main-footer"></div>
+      </div>
+    </div>
+  </body>
+</html>

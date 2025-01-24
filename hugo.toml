@@ -1,0 +1,42 @@
+baseURL = 'https://samoro.st/'
+title = 'Samorost'
+
+lang = 'cs'
+languageCode = 'cs-cz'
+defaultContentLanguage = 'cs'
+author = 'Jan Doskočil'
+
+[params]
+  owner = 'Jan Doskočil'
+
+[taxonomies]
+  tag = "tags"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
+      [markup.goldmark.extensions.extras]
+        [markup.goldmark.extensions.extras.insert]
+          enable = true
+        [markup.goldmark.extensions.extras.subscript]
+          enable = true
+        [markup.goldmark.extensions.extras.mark]
+          enable = true
+        [markup.goldmark.extensions.extras.superscript]
+          enable = true
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = true
+    style = 'native'
+    tabWidth = 4
+    wrapperClass = 'code-highlight'
