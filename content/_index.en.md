@@ -1,12 +1,12 @@
 +++
 date = '2025-01-22T17:20:32+01:00'
-title = 'Úvod'
+title = 'Intro'
 menus = 'main'
 +++
 
 <img src="/img/me.jpg" style="float: right; height: 15em; margin-left: 1em;">
 
-# Úvod
+# Intro
 
 Ahoj, jmenuju se *Honza Doskočil* a na tomhle webu sdílím a píšu cokoliv mě
 zrovna napadne. To bude většinou něco o linuxu, DNS nebo mých názorech a

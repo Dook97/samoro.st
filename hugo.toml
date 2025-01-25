@@ -1,10 +1,17 @@
 baseURL = 'https://samoro.st/'
 title = 'Samorost'
 
-lang = 'cs'
-languageCode = 'cs-cz'
-defaultContentLanguage = 'cs'
-author = 'Jan Doskočil'
+language = 'cs'
+languageCode = 'cs'
+defaultContentLanguage = "cs"
+[languages]
+  [languages.cs]
+    disabled = false
+    languageCode = 'cs'
+    weight = 1
+  [languages.en]
+    languageCode = 'en'
+    weight = 2
 
 [params]
   owner = 'Jan Doskočil'

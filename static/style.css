@@ -187,3 +187,20 @@ h3 {
 	margin-top: 0;
 	list-style-type: none;
 }
+
+#samorost-banner {
+	margin-top: 0;
+	margin-bottom: 0.25em;
+}
+
+#panel-flags {
+	margin-top: 2em;
+}
+
+#panel-flags img {
+	width: 1.75em;
+}
+
+.cflag {
+	width: 1em;
+}

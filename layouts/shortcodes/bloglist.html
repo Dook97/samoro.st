@@ -2,12 +2,15 @@
 {{ $title := .Get 1}}
 
 {{ if not (eq $title "") }}
-  <h3 style="margin-bottom: 0.5em;">{{$title}}:</h3>
+  <h3 style="margin-bottom: 0.5em;">{{ $title }}:</h3>
   <ul style="margin-top: 0;">
 {{ else }}
   <ul>
 {{ end }}
 {{ range .Site.RegularPages.ByDate.Reverse | first $nposts  }}
-  <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+  <li>
+    <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+    {{ partial "flaglink" . }}
+  </li>
 {{ end }}
 </ul>
