@@ -15,10 +15,14 @@
       <div id="sidepanel">
         <div id="panel-content">
           <div id="panel-top">
-            <h1><a href="/">Samoro.st</a></h1>
+            <h1 id="samorost-banner"><a href="/">Samoro.st</a></h1>
             {{- range site.Menus.main }}
             <p><a href="{{ .URL }}">{{ .Name }}</a></p>
             {{- end }}
+            <div id="panel-flags">
+              <img class="cflag" src="/img/cz_glossy.png">
+              <img class="cflag" src="/img/uk_glossy.png">
+            </div>
           </div>
           <div id="panel-bottom">
             <a href="/blog/index.xml"><img class="header-ico" src="/img/rss-ico.svg" /></a>
