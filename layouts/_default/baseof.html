@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>{{ .Site.Title }} | {{ .Title }}</title>
+    <link rel="preload" href="/img/solitary_tree_small.jpg" as="image" />
     <link rel="stylesheet" href="/style.css">
     {{ $noop := .WordCount -}} <!-- force content render before hasMath check -->
     {{- if .Page.Store.Get "hasMath" -}}
