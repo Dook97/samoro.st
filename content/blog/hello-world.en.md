@@ -3,9 +3,9 @@ date = '2025-01-24T19:47:49+01:00'
 title = 'Hello World'
 +++
 
-english lengidz epic style
+First post on this blog - english version.
 
-Zkouška staticky rendrovaných matematických výrazů za pomoci \(\KaTeX\):
+Testing static mathematical formula rendering via \(\KaTeX\) :
 
 \[
 \begin{aligned}
@@ -14,7 +14,7 @@ JS(\hat{y} || y) &= \frac{1}{2}(KL(y||\frac{y+\hat{y}}{2}) + KL(\hat{y}||\frac{y
 \end{aligned}
 \]
 
-Tak jo, to vypadá funkčně :) A co codebloky?
+That seems to be working :) Now how about some codeblocks?
 
 ```python
 def func(arg):
@@ -28,12 +28,12 @@ int main(void) {
 ```
 
 ```bash
-printf 'jdi pryc\nvodpal\nahoj rad te tu vidim!\nahoj2\n' | \
-    sed -n '/ahoj/{p;q}' | \
+printf 'go away\nbuzz off\nhello nice seeing you!\nhello2\n' | \
+    sed -n '/hello/{p;q}' | \
     xargs cowsay
 ```
 
 ```
-ahoj
-jak to jde?
+wassup?
+how goes it?
 ```
