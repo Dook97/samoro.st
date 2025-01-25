@@ -1,5 +1,5 @@
 :root {
-	--sidepanel-width: 15em;
+	--sidepanel-width: 13em;
 }
 
 @font-face {
@@ -34,9 +34,11 @@ body {
 }
 
 .row-container {
-	display: grid;
-	grid-template-columns: 1fr 7fr;
-	gap: 0;
+	display: flex;
+}
+
+#mainpanel {
+	flex: auto;
 }
 
 #main-content {
@@ -73,10 +75,8 @@ body {
 	justify-content: center;
 	margin: 0;
 
-	width: var(--sidepanel-width);
-
-	background-image: url('/img/vetev.png')
-	background-position: bottom left;
+	max-width: var(--sidepanel-width);
+	min-width: var(--sidepanel-width);
 }
 
 #panel-content {
