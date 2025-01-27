@@ -4,7 +4,13 @@
   {{ if eq "en" .Lang }}
     {{ $fmt = "January 2" }}
   {{ end }}
-  {{ range .Pages.GroupByDate "2006" }}
+
+  {{ $pages := .Site.RegularPages }}
+  {{ range .Site.Home.Translations }}
+    {{ $pages = $pages | lang.Merge .Site.RegularPages }}
+  {{ end }}
+
+  {{ range $pages.GroupByDate "2006" }}
     <h3 class="list-year">{{ .Key }}</h3>
     <ul class="list-item">
       {{ range .Pages.ByDate.Reverse }}

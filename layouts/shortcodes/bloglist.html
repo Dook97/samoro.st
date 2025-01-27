@@ -7,7 +7,13 @@
 {{ else }}
   <ul>
 {{ end }}
-{{ range .Site.RegularPages.ByDate.Reverse | first $nposts  }}
+
+{{ $pages := .Site.RegularPages }}
+{{ range .Site.Home.Translations }}
+  {{ $pages = $pages | lang.Merge .Site.RegularPages }}
+{{ end }}
+
+{{ range $pages.ByDate.Reverse | first $nposts  }}
   <li>
     <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
     {{ partial "flaglink" . }}
