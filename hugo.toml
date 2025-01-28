@@ -19,6 +19,9 @@ defaultContentLanguage = "cs"
 [taxonomies]
   tag = "tags"
 
+[outputs]
+  home = ["HTML"]
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
