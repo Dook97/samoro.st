@@ -78,8 +78,8 @@ body {
 }
 
 #panel-content {
-	margin: 1em;
 	position: fixed;
+	margin: 1em;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
@@ -95,6 +95,10 @@ body {
 }
 
 #main-footer {
+	display: flex;
+	text-align: center;
+	flex-direction: row;
+	justify-content: center;
 	margin-top: 12em;
 	margin-bottom: 3em;
 }
@@ -188,7 +192,7 @@ h3 {
 
 #samorost-banner {
 	margin-top: 0.5em;
-	margin-bottom: 0.25em;
+	margin-bottom: 0.5em;
 }
 
 #panel-flags {
@@ -201,4 +205,91 @@ h3 {
 
 .cflag {
 	width: 1em;
+}
+
+.menuitem {
+	margin-bottom: 0.75em;
+}
+
+/* in non-mobile layout this is contained in side panel */
+#author-info {
+	display: none;
+}
+
+/* for mobile phones */
+@media (pointer:none), (pointer:coarse) or (max-width: 900px) {
+	html {
+		font-size: larger;
+	}
+
+	#bgimage-holder {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		z-index: -1;
+	}
+
+	.row-container {
+		flex-direction: column;
+	}
+
+	#sidepanel {
+		width: 100%;
+		max-width: 100%;
+		background-color: rgb(24, 26, 27);
+	}
+
+	#samorost-banner {
+		display: none;
+	}
+
+	#panel-content {
+		position: initial;
+		margin: 0;
+		display: flex;
+		flex-direction: row;
+		height: auto;
+		width: 100%;
+	}
+
+	#panel-decor {
+		display: none;
+	}
+
+	.menuitem {
+		padding: 0.5em;
+		margin: 0;
+		min-width: 4em;
+	}
+
+	#panel-flags {
+		margin: auto 1em;
+		display: inline;
+	}
+
+	#panel-top {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	#navmenu {
+		min-width: 20%;
+		display: flex;
+	}
+
+	#main-content {
+		min-width: 80%;
+		margin: 2em auto;
+	}
+
+	#panel-bottom {
+		display: none;
+	}
+
+	#author-info {
+		display: initial;
+	}
 }

@@ -16,18 +16,17 @@
         <div id="panel-content">
           <div id="panel-top">
             <h1 id="samorost-banner"><a href="{{ relLangURL "" }}">Samoro.st</a></h1>
-            {{- range site.Menus.main }}
-            <p><a href="{{ .URL }}">{{ .Name }}</a></p>
-            {{- end }}
+            <div id="navmenu">
+              {{- range site.Menus.main }}
+              <a href="{{ .URL }}"><div class="menuitem">{{ .Name }}</div></a>
+              {{- end }}
+            </div>
             <div id="panel-flags">
               {{ partial "flaglink" . }}
             </div>
           </div>
           <div id="panel-bottom">
-            <a href="blog/index.xml"><img class="header-ico" src="/img/rss-ico.svg" /></a>
-            <a href="https://www.youtube.com/@jan_doskocil"><img class="header-ico" src="/img/youtube-ico.svg" /></a>
-            <a href="https://github.com/Dook97"><img class="header-ico" src="/img/github-ico.svg" /></a>
-            <p><pre>&copy; {{ time.Now.Format "2006" }} {{ .Site.Params.Owner }}</pre></p>
+            {{ partial "footer" . }}
             <img id="panel-decor" src="/img/vetev.png" />
           </div>
         </div>
@@ -38,7 +37,11 @@
           {{ block "main" . }}
           {{ end }}
         </div>
-        <div id="main-footer"></div>
+        <div id="main-footer">
+          <div id="author-info">
+          {{ partial "footer" . }}
+          </div>
+        </div>
       </div>
     </div>
   </body>
