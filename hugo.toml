@@ -22,6 +22,10 @@ defaultContentLanguage = "cs"
 [outputs]
   home = ["HTML"]
 
+[privacy]
+  [privacy.youTube]
+    privacyEnhanced = true
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
