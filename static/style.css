@@ -157,6 +157,22 @@ q, blockquote {
 	text-shadow: none;
 	background-color: #202020;
 	border-left: 0.3em solid #68A6E5;
+	overflow: auto;
+}
+
+#main-content > table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#main-content th {
+	color: #68A6E5;
+	font-weight: bold;
+}
+
+#main-content td {
+	border: 1px solid;
+	padding: 0.5em;
 }
 
 #main-content > pre > code {
