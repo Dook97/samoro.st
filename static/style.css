@@ -146,9 +146,20 @@ strong, b {
 	font-weight: bold;
 }
 
-code, pre {
-	color: #FCE945;
+pre, code {
 	text-shadow: none;
+	color: #FCE945;
+}
+
+.code-highlight code {
+	color: unset;
+}
+
+#main-content > p > code {
+	text-shadow: none;
+	background-color: #444;
+	padding: 0 0.5em;
+	border-radius: 0.25em;
 }
 
 q, blockquote {

@@ -14,9 +14,9 @@ general opinions on society and current events.
 
 <div style="clear:both;"></div>
 
-Feel free to shoot me an email at `honza@samoro.st`. Check your spam folder for
-the answer though − I run my own mailserver which all but ensures I'm
-constantly on someone's blocklist.
+Feel free to shoot me an email at <a href="mailto:honza@samoro.st">`honza@samoro.st`</a>.
+Check your spam folder for the answer though − I run my own mailserver which all
+but ensures I'm constantly on someone's blocklist.
 
 I would prefer it if you PGP encrypted any mail you might want to send me. Get
 my key from *[keys.openpgp.org](https://keys.openpgp.org)* or from [here](/dat/pubkey.gpg).
