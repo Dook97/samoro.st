@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>{{ .Site.Title }} | {{ .Title }}</title>
-    <link rel="preload" href="/img/solitary_tree_small.jpg" as="image" />
+    <link rel="preload" href="/img/solitary_tree_small.webp" as="image" />
+    <link rel="preload" href="/style.css" as="style" />
     <link rel="stylesheet" href="/style.css">
     {{ $noop := .WordCount -}} <!-- force content render before hasMath check -->
     {{- if .Page.Store.Get "hasMath" -}}
@@ -27,7 +28,7 @@
           </div>
           <div id="panel-bottom">
             {{ partial "footer" . }}
-            <img id="panel-decor" src="/img/vetev.png" />
+            <img id="panel-decor" src="/img/vetev.webp" />
           </div>
         </div>
       </div>

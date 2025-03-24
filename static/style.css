@@ -25,11 +25,23 @@ body {
 	position: fixed;
 	height: 100%;
 	width: calc(100% - var(--sidepanel-width));
-	background-image: url("/img/solitary_tree.jpg"), url("/img/solitary_tree_small.jpg");
+	/* background-image: url("/img/solitary_tree.jpg"), url("/img/solitary_tree_small.webp"); */
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: bottom center;
 	z-index: -1;
+}
+
+@media (max-width: 1920px) {
+	#bgimage-holder {
+		background-image: url("/img/solitary_tree_small.webp");
+	}
+}
+
+@media (min-width: 1921px) {
+	#bgimage-holder {
+		background-image: url("/img/solitary_tree.jpg"), url("/img/solitary_tree_small.webp");
+	}
 }
 
 .row-container {
@@ -127,6 +139,11 @@ a:hover {
 em {
 	color: #68A6E5;
 	font-style: italic;
+}
+
+strong, b {
+	color: #FCE945;
+	font-weight: bold;
 }
 
 code, pre {

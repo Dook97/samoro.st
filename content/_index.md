@@ -4,7 +4,7 @@ title = 'Úvod'
 menus = 'main'
 +++
 
-<img src="/img/me.jpg" style="float: right; height: 15em; margin-left: 1em;">
+<img src="/img/me.webp" style="float: right; height: 15em; margin-left: 1em;">
 
 # Úvod
 
