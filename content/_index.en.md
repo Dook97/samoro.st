@@ -12,7 +12,11 @@ Hi, I'm *Jan Doskočil* and this is my website. Here I'll share anything I
 consider worth writing about. That mostly includes GNU/linux, DNS and my
 general opinions on society and current events.
 
+I like wall climbing, my guitar and programming free software (mostly in C). In
+that order.
+
 <div style="clear:both;"></div>
+<br>
 
 Feel free to shoot me an email at <a href="mailto:honza@samoro.st">`honza@samoro.st`</a>.
 Check your spam folder for the answer though − I run my own mailserver which all

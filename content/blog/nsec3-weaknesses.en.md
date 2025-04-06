@@ -1,20 +1,18 @@
 +++
-date = '2025-02-11T22:39:49+01:00'
-title = 'On the Weaknesses, Drawbacks and Appropriate Uses of NSEC3'
+date = '2025-04-02T20:14:49+01:00'
+title = 'On the Drawbacks, Weaknesses and Appropriate Uses of NSEC3'
 +++
 
-*Originally written for the [CZ.NIC employees' blog.](https://en.blog.nic.cz)*
+*Originally written for the [CZ.NIC staff blog.](https://en.blog.nic.cz/2025/04/02/on-the-drawbacks-weaknesses-and-appropriate-uses-of-nsec3/)*
 
 Let's start with a brief reminder of non-existence proofs in DNSSEC. If you
 have a solid understanding of the topic, feel free to skip this introduction.
 
 The standard DNSSEC solution to proving a record's non-existence is the NSEC
-record. It contains the next node in the lexicographical order and a bitmask
-of available RRTYPEs:
+RR. It contains the next node in the lexicographical order and a bitmask of
+available RTYPEs:
 
-```
-example. 300 IN NSEC ns1.example. A NS SOA RRSIG NSEC DNSKEY
-```
+```example. 300 IN NSEC ns1.example. A NS SOA RRSIG NSEC DNSKEY```
 
 In the trivial case, the node exists but lacks a RRSET of the queried type.
 This is easily verified with the type bitmap.
@@ -34,18 +32,16 @@ operators would prefer an added layer of security by obscurity.
 NSEC3 records are meant to mitigate the enumeration issue by hashing the
 labels:
 
-```
-${HASH}.example. 300 IN NSEC3 1 0 0 - ${NEXT_HASH} A RRSIG
-```
+```${HASH}.example. 300 IN NSEC3 1 0 0 - ${NEXT_HASH} A RRSIG```
 
 Here the RDATA structure is a bit more complicated:
 
 1. hashing algorithm identifier (0 = reserved, 1 = SHA-1, 2-255 = not assigned)
 1. flags field (currently only signals opt-out)
 1. additional hashing iterations (0-65535)
-1. hashing salt (0-255 octets; empty salt is denoted with a hyphen)
+1. hashing salt (0-255 hex encoded octets; hyphen indicates empty salt)
 1. next NSEC3 hash in lexicographical order
-1. a bitmap of RRTYPEs present in the node
+1. a bitmap of RTYPEs present in the node
 
 The general idea is much the same, except now the labels are salted, hashed and
 the NSEC3 records may not be requested directly. This prevents the
@@ -60,7 +56,7 @@ secure and resilient to various kinds of attacks.
 ## Hashing as a defense against zone enumeration
 
 Cracking a hash is only as difficult as guessing the input from which it was
-generated. In the case of DNS that is mostly pretty easy. Labels are selected
+generated and in the case of DNS that is mostly pretty easy. Labels are selected
 on the basis of convenience and long random names are largely undesirable.
 
 In other domains secrets are usually salted to prevent attacks by precomputed
@@ -71,17 +67,15 @@ an attack. In that case the attacker would be left with an incomplete chain.
 For that to be a functional defense however, all NSEC3s and their RRSIGs would
 need to be recomputed with impractical frequency.
 
-## Mining the gov.cz. zone
+## Practical zone mining examples
 
 To illustrate some of the above mentioned issues we decided to attempt
-enumeration of gov.cz. which is the new unified zone for the Czech government
-hosted by CZ.NIC. I did not have any special prior knowledge of the zone,
-neither did I access its contents via means unavailable to the general public
-until after the attack was finished. All cracking was done on an AMD EPYC 7702P
-CPU (64 cores, 2 - 3.5GHz, hyperthreading off).
+enumeration of nic.cz. I did not have any special prior knowledge of the zone,
+neither did I access its contents via means unavailable to the general public.
+All cracking was done on an AMD EPYC 7702P CPU.
 
-At the time of the attack the zone was configured to use NSEC3 with a non-empty
-salt and 0 additional hashing iterations.
+At the time of the attack the zone was configured to use NSEC3 with an 8B salt
+and 0 additional hashing iterations.
 
 ### Phase 1: Walking the Chain
 
@@ -94,12 +88,13 @@ As usual libre software comes with a ready made
 [solution](https://github.com/vitezslav-lindovsky/nsec3walker).
 
 ```
-$ nsec3walker gov.cz >hashes.txt
+$ nsec3walker nic.cz >hashes.txt
 ```
 
-In a few seconds we get 639 hashes, after that the tool seems to crunch in vain
-for a few more minutes without being able to complete the chain. Later I got a
-friendly admin to confirm that we only missed a single hash. Neat.
+In a few seconds we get 1044 hashes − the entire NSEC3 chain − along with a csv
+file mapping them to their available RTYPEs. The tool is fairly efficient with
+network requests allowing even for enumeration of large zones without clashing
+with rate limiting mechanisms.
 
 ### Phase 2: Offline Cracking
 
@@ -114,7 +109,7 @@ the hash, salt and number of iterations. Note the missing dot after the TLD
 name − hashcat's NSEC3 module has no respect for proper notation.
 
 ```
-tr3f3bubvkeqngrc63h1kkvdd7li3ovo:.gov.cz:3f94eadc284708a2:0
+q0kjrc4rooao94qphcttgrn3vrvsohfd:.nic.cz:0bbdde64aecf8344:0
 ```
 
 Starting with the simplest and reasonably effective option: dictionary attacks.
@@ -122,7 +117,7 @@ For our purposes a few different dictionaries were utilized:
 
 * a general DNS [wordlist](https://github.com/esetal/wordlists/raw/refs/heads/main/best-dns-wordlist.txt.zip) (~9.5mil entries)
 * a Czech language [wordlist](https://gpsfreemaps.net/files/security/wordlist/CZ.7z) (~7mil entries)
-* the sk. ccTLD [domain names list](https://sk-nic.sk/subory/domains.txt) (~0.5mil entries)
+* the .sk ccTLD [domain names list](https://sk-nic.sk/subory/domains.txt) (~0.5mil entries)
 
 We feed them to hashcat like:
 
@@ -131,13 +126,13 @@ $ cat dns.txt czech.txt sk.txt >combined.txt
 $ hashcat -a0 -w4 -O -m8300 hashes.txt combined.txt
 ```
 
-...and in a few seconds recover 239 hashes which make up about 36% of our hash
+...and in a few seconds recover 196 hashes which make up about 19% of our hash
 database. Not bad! Now let's take a step back and look at the command invocation.
 
 The options specify in order:
 
 * the attack mode (0 = dictionary)
-* how much system resources may be utilized (4 is most permissive)
+* how much system resources may be utilized (4 = most permissive)
 * to utilize optimized data structures and algorithms, with the drawback of
   shorter maximum candidate length
 * the hash type (8300 = NSEC3)
@@ -152,7 +147,7 @@ If you want a list of all secrets cracked so far you can always get them like so
 ```
 $ hashcat -m8300 --show hashes.txt
 
-pt8lc52rqtbsfqe3h99v9v60aqp0kmci:.gov.cz:3f94eadc284708a2:0:czechtourism
+q0kjrc4rooao94qphcttgrn3vrvsohfd:.nic.cz:0bbdde64aecf8344:0:akademie
 [...]
 ```
 
@@ -165,7 +160,7 @@ $ hashcat -a3 -w4 -O -m8300 --increment -1 '?l?d-.' hashes.txt '?1?1?1?1?1?1?1?1
 
 The brute force attack. We define charset 1 as all lowercase letters, numbers,
 dash and dot then tell hashcat to try all combinations of these up to the length
-of 8. This took about 2.5 hours and recovered another 111 hashes.
+of 8. This took about 2.5 hours and recovered another 165 hashes.
 
 These attack types can be combined in various ways. We may concatenate entries
 from two dictionaries, bruteforce a prefix or suffix to the entries or use the
@@ -177,17 +172,13 @@ $ hashcat -a1 -w4 -O -m8300 -j'$.' hashes.txt wordlist.txt discovered.txt
 
 Prepends a dictionary entry followed by a dot to every previously discovered vertex.
 
-Using these methods I've been able to uncover about 92% of the hashes. An
-additional set of compute-heavy attacks which took over 3 days squeezed out
-another 5%.
+The zone also usually leaks through other channels. For example: once we have
+uncovered a fair amount of domains we may query for NS, TXT, CNAME and DNAME
+records or make reverse queries on addresses from the host's range.
 
-Final score: 92% of the 639 hashes cracked in 18 hours and 97% uncovered in a
-little over 4 days of compute time.
-
-Satisfied with these figures and out of ideas on how to improve on them I asked
-a friendly admin to let me peek into the zone's contents. The few remaining
-undiscovered labels were either very long made up of 3 or more words or had
-some relatively long random component to them.
+Using these methods I've been able to uncover about 84% of the hashes in 3 days
+and 6 hours of compute time. A more experienced operator could've reduced the
+time significantly with similar results.
 
 Several facts to consider:
 
@@ -197,6 +188,24 @@ Several facts to consider:
   weren't necessarily well optimized for the task.
 * All cracking was done on a, albeit powerful, CPU instead of a GPU, which
   could potentially be an order of magnitude faster.
+* From our experiments with other zones the 84% figure seems to be on the lower
+  end of what is easily achievable, with our biggest success being a zone with
+  several hundred vertices mined to 97% in less than a day of compute time.
+
+To see how much of an impact additional iterations have on computational
+complexity we repeated the same process for the nix.cz zone, which, at the
+time of writing, is configured with a 20B salt and **50 additional iterations**.
+
+For my specific workload the slowdown was in the range of 6-8.5x of the
+equivalent with 0 added iterations. In about two days of compute time I've
+recovered 78% of the 178 hashes. I'm confident we could've gotten over 90% were
+we willing to expend the CPU cycles.
+
+A dubious but interesting benefit of this configuration is that hashcat's NSEC3
+module is currently limited to a maximum of 16B for salt. However the limit
+seems to be entirely arbitrary and may be [easily
+increased](https://github.com/hashcat/hashcat/pull/4157) by anyone not afraid
+of compiling their own software.
 
 ## Troubles with iterated hashing
 
@@ -217,11 +226,11 @@ amplification DoS attacks.
 | 150        | 38%                         |
 
 Impact of NSEC3 hashing iterations on the response capacity of authoritative
-servers; [source](https://www.rfc-editor.org/rfc/rfc9276.html#name-computational-burdens-of-pr).
+servers [(src)](https://www.rfc-editor.org/rfc/rfc9276.html#name-computational-burdens-of-pr)
 
-In fact this has become such a problem many resolvers will refuse to validate
+For resolvers this has become such a problem many will refuse to validate
 responses with a high enough hash iteration parameter. In the future the limits
-of what resolvers are willing to accept should gradually decrease as more zones
+of what they're willing to accept should gradually decrease as more zones
 become compliant with the [recommended NSEC3 parameters](https://www.rfc-editor.org/rfc/rfc9276.html#section-3.1-3).
 
 | Resolver          | Iteration limit | Salt limit (octets)   |
@@ -232,7 +241,7 @@ become compliant with the [recommended NSEC3 parameters](https://www.rfc-editor.
 | Unbound           | 150             | none                  |
 
 To see how that translates into practice let's make a query to a misconfigured
-zone using the odvr.nic.cz. service powered by Knot Resolver:
+zone using the odvr.nic.cz service powered by Knot Resolver:
 
 ```
 $ kdig @odvr.nic.cz. +dnssec xxx.bad-nsec3.xdp.cz.
@@ -264,8 +273,8 @@ We've been pretty harsh on NSEC3 in this article, but still it has a very
 important function in the world of contemporary DNSSEC. Unlike its more
 rudimentary older brother, NSEC3 allows for DNSSEC opt-out which is vital for
 incremental DNSSEC deployment in large zones with many insecure delegations.
-The already gigantic com. zone for example would become even more unmanagably
-large if it wasn't for the option of opt-out.
+The already gigantic .com zone, for example, would become even more
+unmanageably large if it wasn't for the option of opt-out.
 
 Any dubious benefits of security by obscurity are made almost completely null
 with moderately powerful hardware even in the hands of a complete amateur.
@@ -273,6 +282,6 @@ NSEC3 shouldn't be considered on the merits of its security properties.
 
 [RFC 9276](https://www.rfc-editor.org/rfc/rfc9276.html#section-3.1-3)
 recommends using 0 additional hashing iterations and an empty salt. For small
-zones or generally for zones without the need for DNSSEC opt-out using the
+zones, or generally for zones without the need for DNSSEC opt-out, using the
 computationally less demanding NSEC should be prefered, since even without any
 additional hashing iterations NSEC3 proofs are considerably more expensive.
