@@ -80,6 +80,10 @@ body {
 	color: #ccc;
 }
 
+.hanchor {
+	color: unset !important;
+}
+
 #sidepanel {
 	display: flex;
 	justify-content: center;
@@ -132,6 +136,11 @@ h1 > a:hover {
 	text-decoration: none;
 }
 
+h2, h3 {
+	padding-top: 1em;
+	margin-top: 1em !important;
+}
+
 a:hover {
 	text-decoration: underline;
 }
@@ -157,7 +166,7 @@ pre, code {
 
 #main-content > p > code {
 	text-shadow: none;
-	background-color: #444;
+	background-color: #333;
 	padding: 0 0.5em;
 	border-radius: 0.25em;
 }
@@ -171,7 +180,7 @@ q, blockquote {
 	padding: 1em;
 	text-shadow: none;
 	border-left: 0.2em solid #FCE945;
-	background-color: #202020;
+	background-color: #292929;
 }
 
 .code-highlight {
@@ -179,11 +188,15 @@ q, blockquote {
 	text-shadow: none;
 	border-left: 0.2em solid #68A6E5;
 }
+.code-highlight div,
+.code-highlight pre {
+	background-color: #292929 !important;
+}
 
 #main-content > pre {
 	padding: 1em;
 	text-shadow: none;
-	background-color: #202020;
+	background-color: #292929;
 	border-left: 0.3em solid #68A6E5;
 	overflow: auto;
 }
@@ -258,6 +271,13 @@ h3 {
 /* in non-mobile layout this is contained in side panel */
 #author-info {
 	display: none;
+}
+
+.lastedit {
+	font-size: small;
+	margin-top: 3em;
+	color: #aaa;
+	font-style: italic;
 }
 
 /* for mobile phones */

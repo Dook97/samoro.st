@@ -21,10 +21,13 @@
               {{- range site.Menus.main }}
               <a href="{{ .URL }}"><div class="menuitem">{{ .Name }}</div></a>
               {{- end }}
+              <a href="/public/"><div class="menuitem"><pre style="margin: 0;">/public</pre></div></a>
             </div>
+            {{ if gt (len .AllTranslations) 1 }}
             <div id="panel-flags">
               {{ partial "flaglink" . }}
             </div>
+            {{ end }}
           </div>
           <div id="panel-bottom">
             {{ partial "footer" . }}
