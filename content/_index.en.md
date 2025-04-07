@@ -12,8 +12,7 @@ Hi, I'm *Jan Doskočil* and this is my website. Here I'll share anything I
 consider worth writing about. That mostly includes GNU/linux, DNS and my
 general opinions on society and current events.
 
-I like wall climbing, my guitar and programming free software (mostly in C). In
-that order.
+Among other things I like wall climbing, my guitar and [free software](https://www.fsf.org/about/).
 
 <div style="clear:both;"></div>
 <br>

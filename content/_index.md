@@ -12,8 +12,7 @@ Ahoj, jmenuju se *Honza Doskočil* a na tomhle webu sdílím a píšu cokoliv m�
 zrovna napadne. To bude většinou něco o *GNU/linux*, DNS nebo mých názorech a
 životních postojích.
 
-Rád lezu po stěnách, hraju na kytaru a programuju svobodný software v Cčku. V
-tomhle pořadí.
+Mimo jiné mám rád lezení po stěnách, svoji kytaru a [svobodný software](https://www.fsf.org/about/).
 
 <div style="clear:both;"></div>
 <br>
