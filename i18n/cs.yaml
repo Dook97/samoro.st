@@ -1,0 +1,2 @@
+publish_date: 'Zveřejněno: {{ .Format "2. 1. 2006" }}'
+edit_date: 'Naposledy upraveno: {{ .Format "2. 1. 2006" }}'

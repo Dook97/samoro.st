@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/style.css">
     {{ $noop := .WordCount -}} <!-- force content render before hasMath check -->
     {{- if .Page.Store.Get "hasMath" -}}
-    <link href="/katex.min.css" rel="stylesheet">
+      <link href="/katex.min.css" rel="stylesheet">
     {{- end }}
   </head>
   <body>
@@ -19,7 +19,7 @@
             <h1 id="samorost-banner"><a href="{{ relLangURL "" }}">Samoro.st</a></h1>
             <div id="navmenu">
               {{- range site.Menus.main.ByWeight }}
-              <a href="{{ .URL }}"><div class="menuitem">{{ .Name }}</div></a>
+                <a href="{{ .URL }}"><div class="menuitem">{{ .Name }}</div></a>
               {{- end }}
               <a href="/public/"><div class="menuitem"><pre style="margin: 0;">/public</pre></div></a>
             </div>
@@ -38,16 +38,13 @@
         <div id="main-content" class="row-item">
           {{ block "main" . }}{{ end }}
           <div id='content-footer'>
-            {{ if ne .Date .Lastmod}}
             <p id='lastedit'>
-              {{ if eq "en" .Lang }}
-                Last edited:
-              {{ else }}
-                Naposledy upraveno:
+              {{ T "publish_date" .Date }}
+              {{ if ne .Date .Lastmod}}
+                <br />
+                {{ T "edit_date" .Lastmod }}
               {{ end }}
-              {{ .Lastmod.Format "2. 1. 2006" }}
             </p>
-            {{ end }}
           </div>
         </div>
         <div id="main-footer">
