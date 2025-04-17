@@ -3,15 +3,4 @@
   {{- with .Content -}}
     {{ . | replaceRE "(<h[1-9] id=\"([^\"]+)\".+)(</h[1-9]+>)" `<a href="#${2}" class="hanchor">${1}</a> ${3}` | safeHTML }}
   {{- end -}}
-
-  {{ if ne .Date .Lastmod}}
-    <p class='lastedit'>
-      {{ if eq "en" .Lang }}
-        Last edited:
-      {{ else }}
-        Naposledy upraveno:
-      {{ end }}
-      {{ .Lastmod.Format "2. 1. 2006" }}
-    </p>
-  {{ end }}
 {{ end }}

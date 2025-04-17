@@ -18,16 +18,14 @@
           <div id="panel-top">
             <h1 id="samorost-banner"><a href="{{ relLangURL "" }}">Samoro.st</a></h1>
             <div id="navmenu">
-              {{- range site.Menus.main }}
+              {{- range site.Menus.main.ByWeight }}
               <a href="{{ .URL }}"><div class="menuitem">{{ .Name }}</div></a>
               {{- end }}
               <a href="/public/"><div class="menuitem"><pre style="margin: 0;">/public</pre></div></a>
             </div>
-            {{ if gt (len .AllTranslations) 1 }}
             <div id="panel-flags">
               {{ partial "flaglink" . }}
             </div>
-            {{ end }}
           </div>
           <div id="panel-bottom">
             {{ partial "footer" . }}
@@ -38,8 +36,19 @@
       <div id="mainpanel">
         <div id="bgimage-holder"></div>
         <div id="main-content" class="row-item">
-          {{ block "main" . }}
-          {{ end }}
+          {{ block "main" . }}{{ end }}
+          <div id='content-footer'>
+            {{ if ne .Date .Lastmod}}
+            <p id='lastedit'>
+              {{ if eq "en" .Lang }}
+                Last edited:
+              {{ else }}
+                Naposledy upraveno:
+              {{ end }}
+              {{ .Lastmod.Format "2. 1. 2006" }}
+            </p>
+            {{ end }}
+          </div>
         </div>
         <div id="main-footer">
           <div id="author-info">
