@@ -83,8 +83,10 @@ body {
 	width: 100%;
 }
 
-#main-content > p {
-	text-align: justify;
+#main-content > p,
+#main-content > dl,
+{
+	text-align: justify !important;
 }
 
 .hanchor {
@@ -145,7 +147,7 @@ h1 > a:hover {
 
 h2, h3 {
 	padding-top: 1em;
-	margin-top: 1em !important;
+	margin-top: 0em;
 }
 
 a:hover {
