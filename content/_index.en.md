@@ -1,7 +1,9 @@
 +++
 date = '2025-01-22T17:20:32+01:00'
+lastmod = '2025-04-16'
 title = 'Intro'
 menus = 'main'
+weight = 1
 +++
 
 <img src="/img/me.webp" style="float: right; height: 15em; margin-left: 1em;">
