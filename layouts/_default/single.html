@@ -4,3 +4,30 @@
     {{ . | replaceRE "(<h[1-9] id=\"([^\"]+)\".+)(</h[1-9]+>)" `<a href="#${2}" class="hanchor">${1}</a> ${3}` | safeHTML }}
   {{- end -}}
 {{ end }}
+
+{{ define "article-footer" }}
+  <div id="article-navigation">
+    <div>
+      {{ if ne .PrevInSection nil }}
+        {{ with .PrevInSection }}
+          <a href="{{ .Permalink }}" title="{{ .Title }}">
+        {{ end }}
+      {{ end }}
+      « Previous
+      {{ if ne .PrevInSection nil }}
+        </a>
+      {{ end }}
+    </div>
+    <div>
+      {{ if ne .NextInSection nil }}
+        {{ with .NextInSection }}
+          <a href="{{ .Permalink }}" title="{{ .Title }}">
+        {{ end }}
+      {{ end }}
+      Next »
+      {{ if ne .NextInSection nil }}
+        </a>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}

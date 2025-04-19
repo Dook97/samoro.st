@@ -301,10 +301,17 @@ h3 {
 }
 
 #lastedit {
-	font-size: small;
-	color: #aaa;
+	display: flex;
+	justify-content: space-between;
+	font-size: smaller;
 	font-style: italic;
-	text-align: right;
+	margin-top: 1em;
+}
+
+#article-navigation {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 2em;
 }
 
 /* for mobile phones */

@@ -38,13 +38,15 @@
         <div id="main-content" class="row-item">
           {{ block "main" . }}{{ end }}
           <div id='content-footer'>
-            <p id='lastedit'>
-              {{ T "publish_date" .Date }}
-              {{ if ne .Date .Lastmod}}
-                <br />
-                {{ T "edit_date" .Lastmod }}
-              {{ end }}
-            </p>
+            {{ block "article-footer" . }}{{ end }}
+            <div id='lastedit'>
+              <div>{{ T "publish_date" .Date }}</div>
+              <div>
+                {{ if ne .Date .Lastmod}}
+                  {{ T "edit_date" .Lastmod }}
+                {{ end }}
+              </div>
+            </div>
           </div>
         </div>
         <div id="main-footer">
