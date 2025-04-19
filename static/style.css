@@ -14,11 +14,9 @@ body {
 	margin: 0;
 
 	font-family: "texgyrepagella", "notosymbols";
+	line-height: 1.2;
 	color: #CCC;
 	background-color: rgb(24, 26, 27);
-
-	/* don't use retarded mobile font-size adjustment */
-	text-size-adjust: none;
 }
 
 #bgimage-holder {
@@ -371,6 +369,7 @@ h3 {
 		display: flex;
 		width: 100%;
 		justify-content: space-between;
+		font-size: xx-large !important;
 	}
 
 	#navmenu {
@@ -389,5 +388,9 @@ h3 {
 
 	#author-info {
 		display: initial;
+	}
+
+	body, #main-content {
+		font-size: larger !important;
 	}
 }
