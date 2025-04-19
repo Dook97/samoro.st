@@ -84,7 +84,7 @@ body {
 }
 
 #main-content > p,
-#main-content > dl,
+#main-content > dl
 {
 	text-align: justify !important;
 }
@@ -165,7 +165,6 @@ strong, b {
 }
 
 pre, code {
-	text-shadow: none;
 	color: #FCE945;
 }
 
@@ -174,7 +173,6 @@ pre, code {
 }
 
 #main-content > p > code {
-	text-shadow: none;
 	background-color: #333;
 	padding: 0 0.5em;
 	border-radius: 0.25em;
@@ -187,14 +185,12 @@ q, blockquote {
 
 .katex-display {
 	padding: 1em;
-	text-shadow: none;
 	border-left: 0.2em solid #FCE945;
 	background-color: #292929;
 }
 
 .code-highlight {
 	margin: 1em 0;
-	text-shadow: none;
 	border-left: 0.2em solid #68A6E5;
 }
 .code-highlight div,
@@ -204,7 +200,6 @@ q, blockquote {
 
 #main-content > pre {
 	padding: 1em;
-	text-shadow: none;
 	background-color: #292929;
 	border-left: 0.3em solid #68A6E5;
 	overflow: auto;
