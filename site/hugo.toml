@@ -19,8 +19,22 @@ defaultContentLanguage = "cs"
 [taxonomies]
   tag = "tags"
 
+[mediaTypes]
+    [mediaTypes."text/x-php"]
+        suffixes = ["php"]
+
+[outputFormats]
+    [outputFormats.php]
+        baseName = "index"
+        isPlainText = false
+        mediaType = "text/x-php"
+
 [outputs]
-  home = ["HTML"]
+  home = ['php']
+  page = ['php']
+  term = ['php']
+  taxonomy = ['php']
+  section = ['php']
 
 [privacy]
   [privacy.youTube]

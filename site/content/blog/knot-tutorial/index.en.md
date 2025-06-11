@@ -1,18 +1,18 @@
 +++
 date = '2025-04-16'
-lastmod = '2025-04-18'
-title = 'Knot DNS in a Complex Topology: An Overview of Features'
+lastmod = '2025-05-20'
+title = 'Knot DNS in a Complex DNSSEC Topology'
+tags = ['DNS', 'Knot', 'software']
 +++
 
-**>> THIS IS A DRAFT <<**
-
-*Written for the CZ.NIC Staff Blog*
+*Written for the [CZ.NIC Staff Blog](https://en.blog.nic.cz/2025/05/07/knot-dns-in-a-complex-dnssec-topology/)*
 
 [Knot DNS](https://www.knot-dns.cz/) has many powerful and useful features, but
 sometimes it might be difficult to see all the intricate ways in which they
 interact and complement each other. In this article I'll attempt to clear up
-some of that confusion by showcasing a somewhat-realistic somewhat-complex
-authoritative DNS infrastructure built on instances of Knot DNS.
+some of that confusion by showcasing a realistic moderately-complex DNS
+infrastructure built on instances of Knot. Our focus will be largely on
+*DNSSEC*.
 
 ## Overview
 
@@ -41,10 +41,9 @@ is any mode of operation, where a single zone is signed by multiple servers in
 parallel. The benefit of a multi-signer setup is increased robustness through redundancy.
 
 The main distinction between multi-signer setups are, whether private keys are
-shared between the instances and whether private key management is manual or
-automatic. In this article we'll go for *automatically managed distinct keys*.
-This choice has some implications which need to be carefully considered during
-configuration.
+shared between the instances and whether key management is manual or automatic.
+In this article we'll go for *automatically managed distinct keys*. This choice
+has some implications which need to be carefully considered during configuration.
 
 The most glaring deficiency is, that each signer will in effect be serving a
 different zone, since different private keys produce different RRSIGs. For that
@@ -103,7 +102,7 @@ zone:
     dnssec-signing: on
     dnssec-policy: multisigner
     serial-policy: unixtime
-    serial-modulo: 0/2 # set to "1/2" on signer2 to avoid zone serial collisions
+    serial-modulo: 0/2+180 # set to "1/2" on signer2 to avoid zone serial collisions
     zonefile-sync: -1  # do not write to the zonefile
     zonefile-load: difference-no-serial
     journal-content: all
@@ -121,12 +120,11 @@ the options.
 the same token any remote registered as a *slave* via the `notify` option,
 should be able to request a zone transfer.
 
-`dnskey-management: incremental` is *required* for multisigner setups without
-shared private keys. Usually a *DNSKEY* record without a corresponding private
-key in Knot's database is purged from the zone. This behaviour would collide
-with the *dnskey-sync* mechanism, so we need to disable it. The disadvantage is,
-that under certain circumstances abandoned dnssec-related records may remain in
-the zone until removed manually.
+Usually a *DNSKEY* RR without a corresponding record in Knot's database of keys
+is purged from the zone. This behaviour would collide with the *dnskey-sync*
+mechanism, so we need to disable it. The disadvantage is, that under certain
+circumstances abandoned dnssec-related records may remain in the zone until
+removed manually.
 
 The traditional *KSK+ZSK* dnssec model is slowly becoming antiquated since
 modern cryptographic algorithms are capable of good security properties with
@@ -140,7 +138,7 @@ in our case, as we'll discover later. See
 [here](https://www.knot-dns.cz/docs/latest/singlehtml/index.html#handling-zone-file-journal-changes-serials)
 for a breakdown of various zonefile operation modes.
 
-Lastly let's touch on the `(serial|keytag)-modulo` options. As might be
+Let's also touch on the `(serial|keytag)-modulo` options. As might be
 expected, these instruct Knot to only assign values from a certain subset of
 natural numbers. This ensures that neither DNSKEY keytags nor zone serial
 numbers collide across the two signers. Colliding *keytags* aren't a mission
@@ -150,6 +148,19 @@ them. Colliding *serials* on different zones *are likely* to eventually break
 your secondaries, be it through faulty IXFRs or other venues, so avoiding them
 is essential.
 
+The `+180` portion of `serial-modulo` defines a *serial shift*. The idea is to
+set `serial-policy` to `unixtime` and shift one of the signers' serial by a
+fixed amount of time. If the primary signer becomes unavailable the secondary
+signer will then naturally be put on hold for the period of the serial shift.
+Remember that in our case switching masters would mean an expensive AXFR. So
+instead of jumping at the opportunity to switch, we give our current master some
+time to catch up and send us an *IXFR* instead. If he can't, we fall back and do
+the AXFR.
+
+There's also a Knot-specific feature called
+[master-pin-tolerance](https://www.knot-dns.cz/docs/latest/singlehtml/index.html#zone-master-pin-tolerance),
+which achieves the same effect without the need for shifting serials.
+
 ## Layer 2: Validators
 
 The next layer in our little experiment are two
@@ -158,13 +169,14 @@ This is another measure to increase robustness. The signer may, either due to
 software or operator error, supply a bad zone which the validator would then
 prevent from propagating further.
 
-The configuration here is much simpler, since all we do is pass the data from
-one Knot instance to another:
+The configuration here is much simpler, since all we do is pass data from one
+Knot instance to another:
 
 ```sh
 server:
-    automatic-acl: on
     listen: 172.20.20.177
+    automatic-acl: on
+    dbus-event: dnssec-invalid
 
 remote:
   - id: signer1
@@ -179,36 +191,21 @@ remote:
 zone:
   - domain: dook.xdp.cz.
     dnssec-validation: on
-    master: [ signer1, signer2 ] # swap on validator2
+    master: [ signer1, signer2 ]
     notify: [ ns1, ns2 ]
-    master-pin-tolerance: 180
     ixfr-by-one: on
     zonefile-sync: -1
 ```
 
-This should read simple to any Knot DNS operator, though again there are a few
+This should read simple to any Knot operator, though again there are a few
 interesting options.
 
-The option `master-pin-tolerance` asks Knot not to switch masters too eagerly.
-Under normal circumstances if we receive a notify indicating higher-than-current
-serial is available, we'd begin a transfer. But remember that in our case that
-*could* mean an expensive AXFR if that notify was sent by `signer2` instead of
-`signer1`. So instead of jumping at the opportunity to switch, we give our
-current master some time to catch up with its serial and send us an *IXFR*
-instead. If he can't, we fall back and do the AXFR. The order of declaration is
-considered when Knot initially decides which `master` to pin.
+`dbus-event: dnssec-invalid` ensures that a
+[D-Bus event](https://www.knot-dns.cz/docs/latest/singlehtml/#dbus-event) is emitted
+on validation failure. This can be used by the server operator to catch and
+resolve any issues early.
 
-If you ever find yourself in a situation, where your *masters* are Knot
-instances, but slaves are not, there is another way to achieve a similar effect.
-The idea is to set the `serial-policy` to `unixtime`, then tell one of the
-masters *(whichever is supposed to be the backup)* to shift his serial back by a
-fixed amount of time. If the primary master becomes unavailable the secondary
-master will then naturally be *"put on hold"* at least for the period of the serial
-shift. The shift is an optional component of the already discussed
-[serial-modulo](https://www.knot-dns.cz/docs/latest/singlehtml/index.html#zone-serial-modulo)
-option.
-
-Lastly `ixfr-by-one` tells Knot to partition merged IXFR back into individual
+`ixfr-by-one` tells Knot to partition merged IXFRs back into individual
 changes stored separately in the journal. This ensures that the validator will
 be able to send an IXFR, even if a slave was previously updated by the other
 master.
@@ -230,8 +227,7 @@ remote:
 
 zone:
   - domain: dook.xdp.cz.
-    master: [ validator1, validator2 ] # swap on ns2 to reverse master-pin preference
-    master-pin-tolerance: 180
+    master: [ validator1, validator2 ]
     zonefile-sync: -1
 ```
 
@@ -242,7 +238,7 @@ As we've by now became accustomed to, Knot offers a simple
 to publishing DS records in the parent zone:
 
 ```sh
-# in signers' config
+# modify signers' configs like so:
 remote:
   - id: ns1.xdp.cz.
     address: 217.31.192.165
@@ -254,10 +250,12 @@ submission:
 
 policy:
   - id: multisigner
+    # [...]
     ksk-submission: dook-sub
 
 zone:
   - domain: dook.xdp.cz.
+    # [...]
     ds-push: ns1.xdp.cz.
     policy: multisigner
 ```
@@ -272,7 +270,7 @@ wait for `check-interval` then check again.
 we have *DDNS update* rights in the parent zone. In our case that is true:
 
 ```sh
-# in ns1.xdp.cz. config
+# in ns1.xdp.cz. config:
 remote:
   - id: signer1.dook.xdp.cz.
     address: 172.20.20.175
@@ -305,9 +303,9 @@ Until now, we left the communication between our servers unprotected, which is a
 bad idea. Knot implements 3 ways to rectify this issue: *QUIC*, *TLS* and
 *TSIG*.
 
-QUIC and TLS may operate in *strict* or *opportunistic* mode. In opportunistic
-mode the peer's certificate isn't verified, so the communication is encrypted,
-but there is a possibility of a *Man in the Middle* attack.
+QUIC and TLS may operate in *strict* or *opportunistic* modes. In strict mode
+the peer's public key is verified so that *Man in the Middle* attacks are
+prevented.
 
 ```sh
 server:
@@ -327,10 +325,34 @@ remote:
     cert-key: US4Q5s598ezu/yKAfAeunIlNnPfu4NSSJHhWCXtpkgY=
 ```
 
+Strict verification configured in both directions (client to server, server to
+client) is considered to be a third mode of operation −
+*[mutual](https://www.rfc-editor.org/rfc/rfc9103#name-mutual-tls)*.
+
 *cert-key* is a hash of the public key of the peer TLS certificate (aka *TLS
-PIN*). Unless `cert-file` is explicitly set in the `server` section, Knot
-uses a one-time in-memory certificate. The TLS PIN of the certificate in use can
-be displayed with `knotc status cert-key`.
+PIN*). The TLS PIN of the certificate in use can be displayed with `knotc status
+cert-key`.
+
+Soon we will release a feature allowing users to utilize TLS certificates
+instead of a `cert-key` for TLS/QUIC peer verification:
+
+```sh
+server:
+    listen-tls: 0.0.0.0
+    listen-quic: 0.0.0.0
+    tls-ca: "/path/to/cert.pem" # PEM file(s) from which to import trusted certs
+
+remote:
+  - id: strict.example.com
+    address: 6.7.8.9
+    tls: on
+    # or 'quic: on'
+    cert-validate: on
+```
+
+On the server level, we specify a list of *PEM* files from which to import
+trusted certificates. The `id` of the `remote` is used to check against the
+hostname in the certificate sent to us during the TLS handshake.
 
 The other option is to use *TSIG*, which doesn't encrypt the communication at
 all, but ensures validity of a transaction by attaching a signature made with a
@@ -349,10 +371,9 @@ remote:
     key: example-key
 ```
 
-With `automatic-acl` enabled configuring one of these 3 options is all you need
-to do. If it was disabled for some reason, you would have to
-[explicitly require](https://www.knot-dns.cz/docs/latest/singlehtml/index.html#strict-authentication)
-one of the mechanisms through `acl`.
+In fact TSIG is orthogonal to the underlying transport protocol, but there isn't
+much utility in combining it with either of the two encrypted protocols in their
+*strict* mode of operation.
 
 ## Wrapping up
 

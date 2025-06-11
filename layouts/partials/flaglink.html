@@ -1,9 +1,0 @@
-{{ range .AllTranslations }}
-	{{ if eq .Lang "cs" }}
-	      <a href="{{ .RelPermalink }}"><img class="cflag" src="/img/cs_flag.webp" /></a>
-	{{ else if eq .Lang "en" }}
-	      <a href="{{ .RelPermalink }}"><img class="cflag" src="/img/en_flag.webp" /></a>
-	{{ else }}
-		<a href="{{ .RelPermalink }}">{{ .Lang }}</a>
-	{{ end }}
-{{ end }}

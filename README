@@ -1,3 +1,26 @@
-Samoro.st
+Samoro.st: A personal website of mine.
 
-A personal website of mine.
+============================================================
+
+A website where I share anything that comes to my mind − now
+with 140% more backend stuffz!
+
+How it works:
+
+* The base PHP templates and contents of blogposts are compiled
+  and statically generated with Hugo[1]
+
+* The webserver redirects all POST HTTP requests to a daemon
+  (comments/main.go). The POST requests are interpreted as
+  comments submitted via a form on the website. If they fit
+  the criteria, the daemon sanitizes and inserts them into a
+  Postgresql database.
+
+* The PHP code then fetches required data from Postgresql
+  and displays them to the user as comments together with
+  the rest of the previously statically generated content.
+
+The best part? No Javascript required for any of this to
+work! The few lines of in-line JS in the project serve only
+for minor conveniences, like restoring scroll location after
+page refresh.

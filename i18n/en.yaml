@@ -1,2 +1,0 @@
-publish_date: 'Published: {{ .Format "1/2/2006" }}'
-edit_date: 'Last edited: {{ .Format "1/2/2006" }}'

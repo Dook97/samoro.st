@@ -10,7 +10,7 @@ weight = 3
 
 Sometimes I happen to find something on the Internet, which I believe could be
 *interesting or inspiring* to others. I'll keep references to such findings on
-this page, each with a short explanation.
+this page, each with a short description.
 
 ## Life
 
@@ -39,13 +39,10 @@ standard.
 
 [**Anatomy of a syscall**](https://lwn.net/Articles/604287/)
 : A great series on *lwn.net* discussing the internals of syscalls in
-*GNU/Linux*.
+*Linux*.
 
 [**dnsviz**](https://dnsviz.net/)
 : A handy tool for DNS(SEC) debugging.
-
-[**godbolt**](https://godbolt.org/)
-: Assembly explorer for C and C++.
 
 ## Media
 

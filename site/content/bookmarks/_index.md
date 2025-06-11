@@ -37,13 +37,10 @@ nástrojů pro všechny operační systémy, které se zvou UNIXem.
 
 [**Anatomy of a syscall**](https://lwn.net/Articles/604287/)
 : Skvělá série článků na *lwn.net* zabývající se fungováním syscallů v
-*GNU/Linux*.
+*Linuxu*.
 
 [**dnsviz**](https://dnsviz.net/)
 : Šikovný nástroj pro debugování DNS(SEC).
-
-[**godbolt**](https://godbolt.org/)
-: Průzkumník assembly pro C a C++.
 
 ## Média
 

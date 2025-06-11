@@ -1,9 +1,10 @@
 +++
 date = '2025-04-02T20:14:49+01:00'
+lastmod = '2025-04-22'
 title = 'On the Drawbacks, Weaknesses and Appropriate Uses of NSEC3'
 +++
 
-*Originally written for the [CZ.NIC staff blog.](https://en.blog.nic.cz/2025/04/02/on-the-drawbacks-weaknesses-and-appropriate-uses-of-nsec3/)*
+*Written for the [CZ.NIC staff blog.](https://en.blog.nic.cz/2025/04/02/on-the-drawbacks-weaknesses-and-appropriate-uses-of-nsec3/)*
 
 Let's start with a brief reminder of non-existence proofs in DNSSEC. If you
 have a solid understanding of the topic, feel free to skip this introduction.

@@ -15,7 +15,7 @@
     <ul class="list-item">
       {{ range .Pages.ByDate.Reverse }}
         <li>
-          {{ dateFormat $fmt .Date }} <a href="{{ .RelPermalink }}">{{ .Name }}</a>
+          {{ dateFormat $fmt .Date }} <a href="{{ replaceRE "index.php$" "" .RelPermalink }}">{{ .Name }}</a>
           {{ partial "flaglink" . }}
         </li>
       {{ end }}
