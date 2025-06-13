@@ -51,8 +51,7 @@ body {
 
 #main-content {
 	margin: 6em 1em 0 3em;
-	max-width: 45em;
-	min-width: 25em;
+	width: 45em;
 }
 
 #main-content > div {
@@ -97,14 +96,18 @@ body {
 	display: flex;
 	justify-content: center;
 	margin: 0;
-	background-color: rgb(24, 26, 27);
-	width: var(--sidepanel-width);
+	min-width: var(--sidepanel-width);
+	max-width: var(--sidepanel-width);
+	height: 100vh;
 }
 
 #panel-content {
+	background-color: rgb(24, 26, 27);
 	position: fixed;
-	margin: 1em;
+	padding-top: 1em;
 	height: 100vh;
+	min-width: var(--sidepanel-width);
+	max-width: var(--sidepanel-width);
 	display: flex;
 	flex-direction: column;
 	text-align: center;
@@ -420,6 +423,7 @@ textarea:focus {
 	#sidepanel {
 		width: 100%;
 		max-width: 100%;
+		height: unset;
 	}
 
 	#samorost-banner {
@@ -427,11 +431,13 @@ textarea:focus {
 	}
 
 	#panel-content {
+		padding: 0;
 		position: initial;
-		margin: 0;
 		display: flex;
 		flex-direction: row;
 		height: auto;
+		min-width: unset;
+		max-width: unset;
 		width: 100%;
 	}
 
@@ -473,12 +479,11 @@ textarea:focus {
 
 	#main-content {
 		width: 100%;
-		max-width: none;
 		margin: 3em 0 0 0;
 	}
 
 	#main-content > div {
-		padding: 1em;
+		padding: 2em 1em;
 	}
 
 	#main-content h1 {
@@ -496,5 +501,9 @@ textarea:focus {
 
 	form, input, textarea {
 		font-size: inherit;
+	}
+
+	ul {
+		padding-left: 1.5em;
 	}
 }
