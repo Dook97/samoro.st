@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
+	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -18,6 +20,14 @@ import (
 
 	_ "github.com/lib/pq"
 )
+
+type cmdArgs struct {
+	dbUser     string
+	dbPass     string
+	dbName     string
+	sockPath   string
+	dbSockPath string
+}
 
 type postHandleCtx struct {
 	db      *sql.DB
@@ -110,27 +120,43 @@ func handlePost(w http.ResponseWriter, r *http.Request, ctx *postHandleCtx) {
 	http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 }
 
+func parseArgs(args *cmdArgs) error {
+	flag.StringVar(&args.dbUser, "db-user", "postgres", "postgresql username")
+	flag.StringVar(&args.dbPass, "db-pass", "postgres", "postgresql passname")
+	flag.StringVar(&args.dbName, "db-name", "", "postgresql databse name")
+	flag.StringVar(&args.dbSockPath, "db-sock", "/var/run/postgresql/", "postgresql socket directory")
+	flag.StringVar(&args.dbSockPath, "sock", "/run/comm/comm.sock", "path at which postgresql databse UNIX socket will be created")
+
+	flag.Parse()
+
+	if args.dbName == "" {
+		fmt.Fprintf(os.Stderr, "-dbName NAME is required\n\n")
+		flag.PrintDefaults()
+		return errors.New("args err")
+	}
+
+	return nil
+}
+
 func main() {
-	if len(os.Args) != 6 {
-		fmt.Printf("USAGE: %v DB_USER DB_PASSWD DB_NAME SOCK_PATH DB_HOST\n", os.Args[0])
+	var args cmdArgs
+	if parseArgs(&args) != nil {
 		os.Exit(1)
 	}
 
 	// connect to postgresql db
-	db, err := func () (*sql.DB, error) {
-		var dsn strings.Builder
-		dsn.Grow(256)
-		for _, v := range [...]string{
-			"user=",      os.Args[1],
-			" password=", os.Args[2],
-			" dbname=",   os.Args[3],
-			" host=",     os.Args[5],
-			" sslmode=disable",
-		} {
-			dsn.WriteString(v)
-		}
-		return sql.Open("postgres", dsn.String())
-	}()
+	var dsn strings.Builder
+	dsn.Grow(256)
+	for _, v := range [...]string{
+		"user=",      args.dbUser,
+		" password=", args.dbPass,
+		" dbname=",   args.dbName,
+		" host=",     args.dbSockPath,
+		" sslmode=disable",
+	} {
+		dsn.WriteString(v)
+	}
+	db, err := sql.Open("postgres", dsn.String())
 	if err != nil {
 		panic(err)
 	}
@@ -143,7 +169,7 @@ func main() {
 	}
 
 	// open unix socket for communication with nginx
-	sockPath := os.Args[4]
+	sockPath := args.sockPath
 	os.Remove(sockPath)
 	listener, err := net.Listen("unix", sockPath)
 	if err != nil {
