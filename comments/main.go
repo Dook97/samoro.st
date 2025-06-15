@@ -7,9 +7,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"unicode/utf8"
 
@@ -27,6 +29,7 @@ type cmdArgs struct {
 	dbName     string
 	sockPath   string
 	dbSockPath string
+	notifyMail string
 }
 
 type postHandleCtx struct {
@@ -34,6 +37,24 @@ type postHandleCtx struct {
 	san     *bluemonday.Policy
 	bodysan *bluemonday.Policy
 }
+
+const notifTemplate =
+`Subject: New comment
+From: comments daemon <comments-notify>
+To: %s
+
+You recieved a new comment on your post at [%s]. Its contents are:
+
+>>>
+%s
+<<<
+
+-----------------------------------
+
+Sent by the comments daemon comm.go
+`
+
+var args cmdArgs
 
 func sanitizeHTML(input string, san *bluemonday.Policy) (string, error) {
 	doc, err := html.Parse(strings.NewReader(input))
@@ -48,6 +69,32 @@ func sanitizeHTML(input string, san *bluemonday.Policy) (string, error) {
 	}
 
 	return san.Sanitize(buf.String()), nil
+}
+
+func sendNotify(postUrl string, commContent string) {
+	if (args.notifyMail == "") {
+		return
+	}
+
+	cmd := exec.Command("sendmail", args.notifyMail)
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		goto err
+	}
+
+	go func() {
+		io.WriteString(stdin, fmt.Sprintf(notifTemplate, args.notifyMail, postUrl, commContent))
+		stdin.Close()
+	}()
+
+	if cmd.Run() != nil {
+		goto err
+	} else {
+		return
+	}
+
+err:
+	fmt.Fprintf(os.Stderr, "failed to send email notification: %v", err)
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request, ctx *postHandleCtx) {
@@ -113,19 +160,21 @@ func handlePost(w http.ResponseWriter, r *http.Request, ctx *postHandleCtx) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "couldn't insert data into database: %v\n", err)
 		// user error is more likely than server error here, but this isn't entirely accurate
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, "bad request", http.StatusBadRequest)
 		return
 	}
 
+	go sendNotify(r.URL.Path, content[2])
 	http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 }
 
 func parseArgs(args *cmdArgs) error {
 	flag.StringVar(&args.dbUser, "db-user", "postgres", "postgresql username")
-	flag.StringVar(&args.dbPass, "db-pass", "postgres", "postgresql passname")
-	flag.StringVar(&args.dbName, "db-name", "", "postgresql databse name")
+	flag.StringVar(&args.dbPass, "db-pass", "postgres", "postgresql password")
+	flag.StringVar(&args.dbName, "db-name", "", "postgresql database name")
 	flag.StringVar(&args.dbSockPath, "db-sock", "/var/run/postgresql/", "postgresql socket directory")
-	flag.StringVar(&args.dbSockPath, "sock", "/run/comm/comm.sock", "path at which postgresql databse UNIX socket will be created")
+	flag.StringVar(&args.sockPath, "sock", "/run/comm/comm.sock", "path at which UNIX listener socket will be created")
+	flag.StringVar(&args.notifyMail, "notify-mail", "", "send notifications of new comments to this address")
 
 	flag.Parse()
 
@@ -139,7 +188,6 @@ func parseArgs(args *cmdArgs) error {
 }
 
 func main() {
-	var args cmdArgs
 	if parseArgs(&args) != nil {
 		os.Exit(1)
 	}
