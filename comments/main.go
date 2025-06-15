@@ -7,9 +7,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"unicode/utf8"
 
@@ -27,6 +29,7 @@ type cmdArgs struct {
 	dbName     string
 	sockPath   string
 	dbSockPath string
+	notifyMail string
 }
 
 type postHandleCtx struct {
@@ -34,6 +37,24 @@ type postHandleCtx struct {
 	san     *bluemonday.Policy
 	bodysan *bluemonday.Policy
 }
+
+const notifTemplate =
+`Subject: New comment
+From: comments daemon <comments-notify>
+To: %s
+
+You recieved a new comment on your post at [%s]. Its contents are:
+
+>>>
+%s
+<<<
+
+-----------------------------------
+
+Sent by the comments daemon comm.go
+`
+
+var args cmdArgs
 
 func sanitizeHTML(input string, san *bluemonday.Policy) (string, error) {
 	doc, err := html.Parse(strings.NewReader(input))
@@ -48,6 +69,25 @@ func sanitizeHTML(input string, san *bluemonday.Policy) (string, error) {
 	}
 
 	return san.Sanitize(buf.String()), nil
+}
+
+func sendNotify(postUrl string, commContent string) error {
+	if (args.notifyMail == "") {
+		return nil
+	}
+
+	cmd := exec.Command("sendmail", args.notifyMail)
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		defer stdin.Close()
+		io.WriteString(stdin, fmt.Sprintf(notifTemplate, args.notifyMail, postUrl, commContent))
+	}()
+
+	return cmd.Run()
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request, ctx *postHandleCtx) {
@@ -117,6 +157,11 @@ func handlePost(w http.ResponseWriter, r *http.Request, ctx *postHandleCtx) {
 		return
 	}
 
+	err = sendNotify(r.URL.Path, content[2])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to send email notification: %v", err)
+	}
+
 	http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 }
 
@@ -125,7 +170,8 @@ func parseArgs(args *cmdArgs) error {
 	flag.StringVar(&args.dbPass, "db-pass", "postgres", "postgresql passname")
 	flag.StringVar(&args.dbName, "db-name", "", "postgresql databse name")
 	flag.StringVar(&args.dbSockPath, "db-sock", "/var/run/postgresql/", "postgresql socket directory")
-	flag.StringVar(&args.dbSockPath, "sock", "/run/comm/comm.sock", "path at which postgresql databse UNIX socket will be created")
+	flag.StringVar(&args.sockPath, "sock", "/run/comm/comm.sock", "path at which UNIX listener socket will be created")
+	flag.StringVar(&args.notifyMail, "notify-mail", "", "send notifications of new comments to this address")
 
 	flag.Parse()
 
@@ -139,7 +185,6 @@ func parseArgs(args *cmdArgs) error {
 }
 
 func main() {
-	var args cmdArgs
 	if parseArgs(&args) != nil {
 		os.Exit(1)
 	}
