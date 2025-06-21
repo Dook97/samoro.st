@@ -30,11 +30,11 @@ defaultContentLanguage = "cs"
         mediaType = "text/x-php"
 
 [outputs]
-  home = ['php']
-  page = ['php']
-  term = ['php']
-  taxonomy = ['php']
-  section = ['php']
+  home = ['php', 'RSS']
+  page = ['php', 'RSS']
+  term = ['php', 'RSS']
+  taxonomy = ['php', 'RSS']
+  section = ['php', 'RSS']
 
 [privacy]
   [privacy.youTube]
