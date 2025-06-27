@@ -16,6 +16,7 @@ body {
 	font-family: "texgyrepagella", "notosymbols";
 	line-height: 1.2;
 	color: #CCC;
+	background-color: #333; /* for dark-reader & similar extensions */
 }
 
 #bgimage-holder {
@@ -208,6 +209,12 @@ q, blockquote {
 	background-color: #292929;
 	border-left: 0.3em solid #68A6E5;
 	overflow: auto;
+}
+
+#main-content > div > p > code {
+	background-color: #3b3b3b;
+	padding: 0 0.3em;
+	border-radius: 0.2em;
 }
 
 .code-highlight {
