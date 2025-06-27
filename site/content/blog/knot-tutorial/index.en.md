@@ -1,6 +1,6 @@
 +++
 date = '2025-04-16'
-lastmod = '2025-05-20'
+lastmod = '2025-06-24'
 title = 'Knot DNS in a Complex DNSSEC Topology'
 tags = ['DNS', 'Knot', 'software']
 +++
@@ -332,27 +332,6 @@ client) is considered to be a third mode of operation −
 *cert-key* is a hash of the public key of the peer TLS certificate (aka *TLS
 PIN*). The TLS PIN of the certificate in use can be displayed with `knotc status
 cert-key`.
-
-Soon we will release a feature allowing users to utilize TLS certificates
-instead of a `cert-key` for TLS/QUIC peer verification:
-
-```sh
-server:
-    listen-tls: 0.0.0.0
-    listen-quic: 0.0.0.0
-    tls-ca: "/path/to/cert.pem" # PEM file(s) from which to import trusted certs
-
-remote:
-  - id: strict.example.com
-    address: 6.7.8.9
-    tls: on
-    # or 'quic: on'
-    cert-validate: on
-```
-
-On the server level, we specify a list of *PEM* files from which to import
-trusted certificates. The `id` of the `remote` is used to check against the
-hostname in the certificate sent to us during the TLS handshake.
 
 The other option is to use *TSIG*, which doesn't encrypt the communication at
 all, but ensures validity of a transaction by attaching a signature made with a
