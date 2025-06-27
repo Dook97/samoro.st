@@ -20,7 +20,7 @@
         <h1 id="samorost-banner"><a href="{{ relLangURL "" }}">Samoro.st</a></h1>
         <div id="navmenu">
           {{- range site.Menus.main.ByWeight }}
-            <a href="{{ replaceRE "index.php$" "" .URL }}"><div class="menuitem">{{ .Name }}</div></a>
+            <a href="{{ replaceRE "/index.php$" "" .URL }}"><div class="menuitem">{{ .Name }}</div></a>
           {{- end }}
           <a href="/public/"><div class="menuitem"><pre style="margin: 0;">/public</pre></div></a>
         </div>

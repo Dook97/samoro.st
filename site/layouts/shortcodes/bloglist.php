@@ -15,7 +15,7 @@
 
 {{ range $pages.ByDate.Reverse | first $nposts  }}
   <li>
-    <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+    <a href="{{ replaceRE "/index.php$" "" .RelPermalink }}">{{ .LinkTitle }}</a>
     {{ partial "flaglink" . }}
   </li>
 {{ end }}

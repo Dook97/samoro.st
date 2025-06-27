@@ -10,7 +10,7 @@
     <div>
       {{ if ne .PrevInSection nil }}
         {{ with .PrevInSection }}
-          <a href="{{ replaceRE "index.php$" "" .RelPermalink }}" title="{{ .Title }}">
+          <a href="{{ replaceRE "/index.php$" "" .RelPermalink }}" title="{{ .Title }}">
         {{ end }}
       {{ end }}
       {{ T "nav_previous" }}
@@ -21,7 +21,7 @@
     <div>
       {{ if ne .NextInSection nil }}
         {{ with .NextInSection }}
-          <a href="{{ replaceRE "index.php$" "" .RelPermalink }}" title="{{ .Title }}">
+          <a href="{{ replaceRE "/index.php$" "" .RelPermalink }}" title="{{ .Title }}">
         {{ end }}
       {{ end }}
       {{ T "nav_next" }}
