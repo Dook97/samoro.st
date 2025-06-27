@@ -71,7 +71,7 @@ func sanitizeHTML(input string, san *bluemonday.Policy) (string, error) {
 	return san.Sanitize(buf.String()), nil
 }
 
-func sendNotify(postUrl string, commContent string) {
+func sendNotify(postURL string, commContent string) {
 	if (args.notifyMail == "") {
 		return
 	}
@@ -83,13 +83,12 @@ func sendNotify(postUrl string, commContent string) {
 	}
 
 	go func() {
-		io.WriteString(stdin, fmt.Sprintf(notifTemplate, args.notifyMail, postUrl, commContent))
+		io.WriteString(stdin, fmt.Sprintf(notifTemplate, args.notifyMail, postURL, commContent))
 		stdin.Close()
 	}()
 
-	if cmd.Run() != nil {
-		goto err
-	} else {
+	err = cmd.Run()
+	if err == nil {
 		return
 	}
 
@@ -154,12 +153,11 @@ func handlePost(w http.ResponseWriter, r *http.Request, ctx *postHandleCtx) {
 	}
 
 	// comment uid and date are handled automatically by constraints in db
-	// this format of query with placeholder values automatically sanitazes input
 	query := "INSERT INTO comments (post_id, author, title, content) VALUES ($1, $2, $3, $4)"
 	_, err = ctx.db.Exec(query, postid, content[0], content[1], content[2])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "couldn't insert data into database: %v\n", err)
-		// user error is more likely than server error here, but this isn't entirely accurate
+		// user error is more likely than server error here, but this isn't always accurate
 		http.Error(w, "bad request", http.StatusBadRequest)
 		return
 	}
@@ -173,7 +171,7 @@ func parseArgs(args *cmdArgs) error {
 	flag.StringVar(&args.dbPass, "db-pass", "postgres", "postgresql password")
 	flag.StringVar(&args.dbName, "db-name", "", "postgresql database name")
 	flag.StringVar(&args.dbSockPath, "db-sock", "/var/run/postgresql/", "postgresql socket directory")
-	flag.StringVar(&args.sockPath, "sock", "/run/comm/comm.sock", "path at which UNIX listener socket will be created")
+	flag.StringVar(&args.sockPath, "sock", "/run/comm/comm.sock", "UNIX listener socket path")
 	flag.StringVar(&args.notifyMail, "notify-mail", "", "send notifications of new comments to this address")
 
 	flag.Parse()
