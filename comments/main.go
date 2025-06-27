@@ -235,6 +235,7 @@ func main() {
 	bsan.AllowElements("b", "i", "a")
 	bsan.AllowAttrs("href").OnElements("a")
 	bsan.AllowTables()
+	bsan.AllowStandardURLs()
 
 	ctx := &postHandleCtx{
 		db:      db,
